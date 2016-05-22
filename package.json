@@ -1,0 +1,25 @@
+{
+  "name": "just-react",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simenkid/justReact.git"
+  },
+  "author": "Simen Li",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/simenkid/justReact/issues"
+  },
+  "homepage": "https://github.com/simenkid/justReact#readme",
+  "dependencies": {
+    "material-ui": "^0.15.0",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-tap-event-plugin": "^1.0.0"
+  }
+}
