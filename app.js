@@ -4,11 +4,16 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import MyAwesomeReactComponent from './myAwesomeReactComponent';
 
-const App = () => (
-  <MuiThemeProvider muiTheme={getMuiTheme()}>
-    <MyAwesomeReactComponent />
-  </MuiThemeProvider>
-);
+var App = React.createClass({
+    render: function () {
+     return (
+            <MuiThemeProvider muiTheme={getMuiTheme()}>
+                <MyAwesomeReactComponent />
+            </MuiThemeProvider>
+        )
+    }
+});
+
 
 ReactDOM.render(
   <App />,
