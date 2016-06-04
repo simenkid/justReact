@@ -3,7 +3,7 @@ var styles = require('./a.css'),
 
 module.exports = function () {
     var element = document.createElement('h1');
-    element.className = styles.redButton + ' ' + styles2.deco + ' ' + 'pure-button';
+    element.className = styles.redButton + ' ' + styles2.deco;
     element.innerHTML = "Hello World";
     return element;
 };
