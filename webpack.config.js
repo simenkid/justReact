@@ -1,76 +1,58 @@
-const webpack = require('webpack');
-const path = require('path');
-const buildPath = path.resolve(__dirname, 'www');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+var path = require('path'),
+    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    merge = require('webpack-merge'),
+    validator = require('webpack-validator');
 
-const config = {
-  // Entry point to the project
-  entry: [
-    'webpack/hot/dev-server',
-    'webpack/hot/only-dev-server',
-    path.resolve(__dirname, './app.js'),
-  ],
-  // Webpack config options on how to obtain modules
-  resolve: {
-    // When requiring, you don't need to add these extensions
-    extensions: ['', '.js', '.md', '.txt'],
-  },
-  // Configuration for dev server
-  devServer: {
-    contentBase: 'www',
-    devtool: 'eval',
-    hot: true,
-    inline: true,
-    port: 3000,
-    // Required for webpack-dev-server.
-    outputPath: buildPath,
-  },
-  devtool: 'eval',
-  // Output file config
-  output: {
-    path: buildPath, // Path of output file
-    filename: 'bundle.js', // Name of output file
-  },
-  plugins: [
-    // Allows for sync with browser while developing (like BorwserSync)
-    new webpack.HotModuleReplacementPlugin(),
-    // Allows error warninggs but does not stop compiling. Will remove when eslint is added
-    new webpack.NoErrorsPlugin(),
-    new CopyWebpackPlugin([
-      {from: 'www/index.html'},
-    ]),
-  ],
-  externals: {
-    fs: 'js', // To remove once https://github.com/benjamn/recast/pull/238 is released
-  },
-  module: {
-    // Allow loading of non-es
-    loaders: [
-      {
-        test: /\.js$/,
-        loaders: [
-          'react-hot',
-          'babel-loader',
-        ],
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.json$/,
-        loader: 'json-loader',
-      },
-      {
-        test: /\.md$/,
-        loader: 'raw-loader',
-      },
-      {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader',
-      },
+var parts = require('./lib/parts');
+
+var PATHS = {
+    app: path.join(__dirname, 'app'),
+    style: [
+        path.join(__dirname, 'node_modules', 'purecss'),
+        path.join(__dirname, 'app', 'styles', 'main.css')
     ],
-  },
-  // eslint: {
-  //   configFile: '../.eslintrc',
-  // },
+    build: path.join(__dirname, 'build'),
 };
 
-module.exports = config;
+var config = {};
+var common = {
+    entry: {
+        app: PATHS.app,
+        style: PATHS.style
+    },
+    output: {
+        path: PATHS.build,
+        filename: '[name].[hash].js',
+        chunkFilename: '[hash].js'
+    },
+    plugins: [
+        new HtmlWebpackPlugin({ title: 'my webpack practice' })
+    ]
+};
+
+switch (process.env.npm_lifecycle_event) {
+    case 'build':
+        config = merge(
+            common,
+            { devtool: 'source-map'},
+            parts.clean(PATHS.build),
+            parts.setFreeVariable('process.env.NODE_ENV', 'production'),
+            parts.extractBundle({ name: 'vendor', entries: [ 'react' ]}),
+            parts.minify(),
+            parts.extractCSS(PATHS.style),
+            parts.purifyCSS(PATHS.style)
+        );
+        break;
+    default:
+        config = merge(
+            common,
+            { devtool: 'eval-source-map'},
+            parts.setupCSS(PATHS.style),
+            parts.devServer({
+                host: process.env.HOST,
+                port: process.env.PORT
+            })
+        );
+}
+
+module.exports = validator(config);
