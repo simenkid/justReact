@@ -8,19 +8,27 @@
 // var component = require('./component');
 // var HelloReact = require('./components/HelloText.js');
 
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import MyAwesomeReactComponent from './components/MyAwesomeReactComponent';
 import SpeedSelector from './components/SpeedSelector';
+import NoteInput from './components/NoteInput';
+import AppBarExampleIcon from './components/AppBarExampleIcon';
+import SvgIconExampleIcons from './components/SvgIconExampleIcons';
+
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
+injectTapEventPlugin();
 
 var element = document.createElement('div');
 element.id = "container";
 
 // document.body.appendChild(component());
 document.body.appendChild(element);
+
+
 
 // ReactDOM.render(<HelloReact />, document.getElementById('container'));
 
@@ -45,7 +53,16 @@ document.body.appendChild(element);
 var App = function () {
     return (
         <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <div>
+            <AppBarExampleIcon />
+            <hr />
+            <br />
             <SpeedSelector />
+            <br />
+            <NoteInput />
+            <br />
+            <SvgIconExampleIcons />
+        </div>
         </MuiThemeProvider>
     );
 };

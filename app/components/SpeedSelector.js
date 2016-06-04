@@ -11,13 +11,13 @@ var SpeedSelector = React.createClass({
     },
     render: function () {
         return (
-            <div>
-                <SelectField value={this.state.value} onChange={this.handleChange}>
-                    <MenuItem value={1} primaryText="Never" />
-                    <MenuItem value={2} primaryText="Every Night" />
-                    <MenuItem value={3} primaryText="Weeknights" />
-                    <MenuItem value={4} primaryText="Weekends" />
-                    <MenuItem value={5} primaryText="Weekly" />
+            <div> Speed (beats/second) <br/>
+                <SelectField style={{width: 80}} value={this.state.value} onChange={this.handleChange}>
+                    <MenuItem value={1} primaryText="1" />
+                    <MenuItem value={2} primaryText="2" />
+                    <MenuItem value={3} primaryText="4" />
+                    <MenuItem value={4} primaryText="8" />
+                    <MenuItem value={5} primaryText="16" />
                 </SelectField>
             </div>
         );

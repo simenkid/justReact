@@ -8,7 +8,7 @@ var parts = require('./lib/parts');
 var PATHS = {
     app: path.join(__dirname, 'app'),
     style: [
-        path.join(__dirname, 'node_modules', 'purecss'),
+//        path.join(__dirname, 'node_modules', 'purecss'),
         path.join(__dirname, 'app', 'styles', 'main.css')
     ],
     build: path.join(__dirname, 'build'),
