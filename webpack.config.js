@@ -28,12 +28,12 @@ var common = {
     module: {
         loaders: [
             {
-                test: /\.jsx?$/,
+                test: /\.js?$/,
                 include: PATHS.app,
                 loader: 'react-hot',
             },
             {
-                test: /\.jsx?$/,
+                test: /\.js?$/,
                 exclude: /(node_modules|bower_components)/,
                 loader: 'babel',
                 query: {

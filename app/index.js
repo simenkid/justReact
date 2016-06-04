@@ -2,7 +2,7 @@ var React = require('react'),
     ReactDOM = require('react-dom');
 
 var component = require('./component');
-var HelloReact = require('./components/HelloText.jsx');
+var HelloReact = require('./components/HelloText.js');
 
 
 var element = document.createElement('div');

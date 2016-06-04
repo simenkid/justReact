@@ -3,7 +3,7 @@ var React = require('react');
 var HelloText = React.createClass({
     render: function () {
         return (
-            <div>Hello React!</div>
+            <div>Hello! React!</div>
         );
     }
 });
