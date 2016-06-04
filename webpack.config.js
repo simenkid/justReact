@@ -25,6 +25,23 @@ var common = {
         filename: '[name].[hash].js',
         chunkFilename: '[hash].js'
     },
+    module: {
+        loaders: [
+            {
+                test: /\.jsx?$/,
+                include: PATHS.app,
+                loader: 'react-hot',
+            },
+            {
+                test: /\.jsx?$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel',
+                query: {
+                    presets: [ 'react', 'es2015' ]
+                }
+            }
+        ]
+    },
     plugins: [
         new HtmlWebpackPlugin({ title: 'my webpack practice' })
     ]
