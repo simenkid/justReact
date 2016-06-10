@@ -8,32 +8,44 @@ import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 var SPlayer = require('soundfont-player');
 var isClicked = false;
 
-var ctx = new AudioContext();
-var soundfont = new Soundfont(ctx);
+
     
 var playSound = function () {
-
+    var ctx = new AudioContext();
+    var drum, piano;
     var notesFieldValue = "F4 A4 A4 A4 F4 B4 B4 B4 F4 A4 A4 A4 F4 B4 B4 B4 F4 A4 A4 A4 F4 B4 B4 B4 "
     + "F4 A4 A4 A4 F4 B4 B4 B4 F4 A4 A4 A4 F4 A4 A4 A4 F4 B4 B4 B4 F4 A4 A4 A4";
-    var drum = soundfont.instrument('glockenspiel');
-    var piano = soundfont.instrument('banjo');
+    Soundfont.instrument(ctx, 'glockenspiel').then(function (drm) {
+        drum = drm;
+        return Soundfont.instrument(ctx, 'banjo');
+    }).then(function (pno) {
+        piano = pno;
+    }).then(function () {
+        setTimeout(function () {
+            isClicked = false;
+        }, notesFieldValue.split(" ").length * 250);
 
-    setTimeout(function () {
-        isClicked = false;
-    }, notesFieldValue.split(" ").length * 250);
+        (function() {
+            var time = ctx.currentTime + 0.2;
+            notesFieldValue.split(" ").forEach(function(note, idx) {
+                if (idx%4) {
+                    // piano.schedule(note, time, 0.4);
+                    // drum.schedule(note, time, 0.4);
+                    piano.play(note, time, 0.4);
+                    drum.play(note, time+0.1, 0.4);
+                } else {
+                    //drum.play(note, time, 0.4);
+                    // drum.play(note, time, 0.2);
 
-    (function() {
-        var time = ctx.currentTime + 0.2;
-        notesFieldValue.split(" ").forEach(function(note, idx) {
-            if (idx%4) {
-                piano.play(note, time, 0.4);
-            } else {
-                drum.play(note, time, 0.4);
-            }
+                }
 
-            time += 0.25;
-        });
-    })();
+                    // piano.play(note, time, 0.1);
+                time += 0.25;
+            });
+        })();
+    });
+
+
 };
 
 var play = function () {
