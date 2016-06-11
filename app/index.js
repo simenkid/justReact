@@ -17,6 +17,7 @@ import SpeedSelector from './components/SpeedSelector';
 import NoteInput from './components/NoteInput';
 import AppBarExampleIcon from './components/AppBarExampleIcon';
 import SvgIconExampleIcons from './components/SvgIconExampleIcons';
+import Settings from './components/Settings';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -56,6 +57,8 @@ var App = function () {
         <div>
             <AppBarExampleIcon />
             <hr />
+            <br />
+            <Settings />
             <br />
             <SpeedSelector />
             <br />
