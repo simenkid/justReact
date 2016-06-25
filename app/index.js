@@ -12,6 +12,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
 import MyAwesomeReactComponent from './components/MyAwesomeReactComponent';
 import SpeedSelector from './components/SpeedSelector';
 import NoteInput from './components/NoteInput';
@@ -19,7 +21,6 @@ import AppBarExampleIcon from './components/AppBarExampleIcon';
 import SvgIconExampleIcons from './components/SvgIconExampleIcons';
 import Settings from './components/Settings';
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
 
 injectTapEventPlugin();
 
