@@ -4,11 +4,16 @@ import TextField from 'material-ui/TextField';
 var NoteInput = React.createClass({
     render: function () {
         return (
-            <div>Insert notes here: <br />
-                <TextField hintText="01012103" /><br />
-            </div>
+            <TextField
+              style={this.props.style}
+              hintText="01012103"
+              floatingLabelText="Insert notes here:"
+              multiLine={true}
+              rows={4}
+            />
         );
     }
 });
 
 module.exports = NoteInput;
+

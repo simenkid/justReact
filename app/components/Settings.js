@@ -9,7 +9,7 @@ var styles = {
   },
   radioButton: {
     display: "inline-block",
-    marginBottom: 16,
+    marginBottom: 2,
   },
 };
 

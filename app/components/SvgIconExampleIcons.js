@@ -9,49 +9,40 @@ var Walkman = require('walkman');
 var SPlayer = require('soundfont-player');
 var isClicked = false;
 
-var wm = new Walkman({ row: 5, col: 8 });
+var wm = new Walkman({ row: 5, col: 8, speed: 2 });
 
-wm.useInstrument('tubular_bells').then(function () {
-    return wm.useInstrument('synth_drum');
-}).then(function () {
+var drumName = 'http://simenkid.github.io/walkman/sound/fourier_drum-mp3.js';
+wm.useInstrument(drumName).then(function () {
     // instrObjs = [ { instrName: 'xxx', note: 'C1', double: false }, ... ];
-    wm.defineEffect('basedrum', [ { instrName: 'synth_drum', note: 'G3', double: false } ]);
-    wm.defineEffect('hihat', [ { instrName: 'tubular_bells', note: 'G6', double: false } ]);
-    wm.defineEffect('snare', [ { instrName: 'synth_drum', note: 'D1', double: false } ]);
-    wm.defineEffect('open-hihat', [ { instrName: 'tubular_bells', note: 'Bb1', double: false } ]);
-    wm.defineEffect('drum-and-hihat', [ { instrName: 'synth_drum', note: 'G6', double: false }, { instrName: 'tubular_bells', note: 'G6', double: false } ]);
-    wm.defineEffect('drum-and-crash', [ { instrName: 'synth_drum', note: 'G6', double: false }, { instrName: 'synth_drum', note: 'C#2', double: false } ]);
-    wm.defineEffect('drum-and-snare', [ { instrName: 'synth_drum', note: 'G6', double: false }, { instrName: 'synth_drum', note: 'D1', double: false } ]);
-    wm.defineEffect('clap-twice', [ { instrName: 'synth_drum', note: 'Eb1', double: true } ]);
+    wm.defineEffect('basedrum', [ { instrName: drumName, note: 'A0', double: false } ]);
+    wm.defineEffect('snare', [ { instrName: drumName, note: 'A1', double: false } ]);
+    wm.defineEffect('crash', [ { instrName: drumName, note: 'A2', double: false } ]);
+    wm.defineEffect('hihat', [ { instrName: drumName, note: 'A3', double: false } ]);
+    wm.defineEffect('open-hihat', [ { instrName: drumName, note: 'A4', double: false } ]);
+    wm.defineEffect('drum-and-hihat', [ { instrName: drumName, note: 'A0', double: false }, { instrName: drumName, note: 'A3', double: false } ]);
+    wm.defineEffect('drum-and-crash', [ { instrName: drumName, note: 'A0', double: false }, { instrName: drumName, note: 'A2', double: false } ]);
+    wm.defineEffect('drum-and-snare', [ { instrName: drumName, note: 'A0', double: false }, { instrName: drumName, note: 'A1', double: false } ]);
+    wm.defineEffect('crash-twice', [ { instrName: drumName, note: 'A2', double: true } ]);
 
     wm.defineEffectMap([
-        [ 'basedrum' , 'drum-and-hihat', 'drum-and-crash', 'clap-twice', null ],
-        [ 'hihat', 'open-hihat', 'snare', 'clap-twice', null ],
-        [ 'hihat', 'open-hihat', 'snare', 'clap-twice', null ],
-        [ 'hihat', 'open-hihat', 'snare', 'clap-twice', null ],
-        [ 'snare', 'drum-and-snare', 'drum-and-crash', 'clap-twice', null ],
-        [ 'hihat', 'open-hihat', 'snare', 'clap-twice', null ],
-        [ 'hihat', 'open-hihat', 'snare', 'clap-twice', null ],
-        [ 'hihat', 'open-hihat', 'snare', 'clap-twice', null ],
+        [ 'basedrum' , 'drum-and-hihat', 'drum-and-crash', 'crash-twice', null ],
+        [ 'hihat', 'open-hihat', 'snare', 'crash-twice', null ],
+        [ 'hihat', 'open-hihat', 'snare', 'crash-twice', null ],
+        [ 'hihat', 'open-hihat', 'snare', 'crash-twice', null ],
+        [ 'snare', 'drum-and-snare', 'drum-and-crash', 'crash-twice', null ],
+        [ 'hihat', 'open-hihat', 'snare', 'crash-twice', null ],
+        [ 'hihat', 'open-hihat', 'snare', 'crash-twice', null ],
+        [ 'hihat', 'open-hihat', 'snare', 'crash-twice', null ],
     ]);
 
-    // wm.defineEffectMap([
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    //     [ 'clap-twice', 'clap-twice', 'clap-twice', 'clap-twice', null ],
-    // ]);
 });
 
 
     
 var playSound = function () {
-    var symbols = [ 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0,
-                    1, 3, 2, 1, 1, 3, 2, 1, 1, 3, 2, 1, 1, 3, 2, 1, 1, 3, 2, 1 ];
+    var symbols = [ 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 
+                    0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3,
+                    3, 2, 1, 0,  3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0,  3, 2, 1, 0,  3, 2, 1, 0  ];
     wm.play(symbols);
 };
 
