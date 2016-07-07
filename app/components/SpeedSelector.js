@@ -5,10 +5,12 @@ import { cyanA700 } from 'material-ui/styles/colors';
 
 var SpeedSelector = React.createClass({
     getInitialState: function () {
-        return { value: 1 };
+        return { value: 2 };
     },
     handleChange: function (event, index, value) {
         this.setState({value:value});
+        if (this.props.onChanged)
+          this.props.onChanged(value);
     },
     render: function () {
         return (

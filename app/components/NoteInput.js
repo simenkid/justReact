@@ -7,20 +7,27 @@ var NoteInput = React.createClass({
     },
     onChanged: function (evt) {
         var inputStr = evt.target.value;
-        var pattern = /[0-4,\s\n\r\t]$/;
-        var newState = { value: null };
+        var pattern = /[0-4,\s\n\r\t\0]$/;
+        var newState = { value: this.state.value };
 
         if (pattern.test(inputStr)) {  // returns a boolean
-            newState.value = inputStr.slice(0, inputStr.length);
-            this.setState(newState);
+                newState.value = inputStr.slice(0, inputStr.length);
 
-            if (this.props.onChanged)
-                this.props.onChanged(newState.value);
+            this.setState(newState);
+        } else {
+            if (inputStr.length === 0) {
+                newState.value = '';
+                this.setState(newState);
+            }
         }
+
+        if (this.props.onChanged)
+            this.props.onChanged(newState.value);
     },
     render: function () {
         return (
             <TextField {...this.props}
+              ref="noteinput" 
               hintText="01012103"
               floatingLabelText="Insert notes here:"
               multiLine={true}
