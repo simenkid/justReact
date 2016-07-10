@@ -3,12 +3,7 @@ import ReactDOM from 'react-dom';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-
-import MyAwesomeReactComponent from './components/MyAwesomeReactComponent';
-import AppBarExampleIcon from './components/AppBarExampleIcon';
-import SvgIconExampleIcons from './components/SvgIconExampleIcons';
 import Panel from './components/Panel';
-
 import { blue100 } from 'material-ui/styles/colors';
 
 

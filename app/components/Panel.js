@@ -1,14 +1,17 @@
 import React from 'react';
 import Divider from 'material-ui/Divider';
+import Snackbar from 'material-ui/Snackbar';
 import SpeedSelector from './SpeedSelector';
 import NoteInput from './NoteInput';
-import Player from './Player';
+// import Player from './Player';
+import PlayerNew from './PlayerNew';
+import LinearProgress from 'material-ui/LinearProgress';
 
-import { cyanA700 } from 'material-ui/styles/colors';
+import { cyanA700, lightGreen200, purple400, lightBlue500 } from 'material-ui/styles/colors';
 
-/*******************************************************/
-/* Walkman Player                                      */
-/*******************************************************/
+/*************************************************************************************************/
+/*** Walkman Player                                                                            ***/
+/*************************************************************************************************/
 var Walkman = require('walkman');
 var wm = new Walkman({ row: 5, col: 8, speed: 1 });
 var drumName = 'http://simenkid.github.io/walkman/sound/fourier_drum-mp3.js';
@@ -37,8 +40,15 @@ wm.useInstrument(drumName).then(function () {
     ]);
 });
 
-/*******************************************************/
 
+function msToTimeString(ms) {
+  var t = new Date(ms);
+
+  return t.getMinutes() + ':' + t.getSeconds();
+}
+/*************************************************************************************************/
+/*** Panel Class                                                                               ***/
+/*************************************************************************************************/
 const style = {
   height: 600,
   width: 600,
@@ -47,78 +57,68 @@ const style = {
   display: 'inline-block',
 };
 
-var looper;
+var progColor = lightBlue500;
 
 var Panel = React.createClass({
     getInitialState: function () {
       return {
-        playerStatus: 'stop',
-        notesText: null,
         speed: 2,
-        loop: false
+        notesText: '',
+        playerStatus: 'stop',
+        isLoop: false,
+        snackOpen: false,
+        snackMessage: '',
+        notesLength: 0,
+        notesLeft: 0
       }
+    },
+    consumer: null,
+    clearConsumeNotes: function () {
+      this.pauseConsumeNotes();
+      this.setState({
+        notesLeft: 0
+      });
+    },
+    pauseConsumeNotes: function () {
+      if (this.consumer) {
+        clearInterval(this.consumer);
+        this.consumer = null;
+      }
+    },
+    startConsumeNotes: function () {
+
+      if (this.consumer)
+        clearInterval(this.consumer);
+
+      this.consumer = setInterval(function () {
+          var left = this.state.notesLeft - 1;
+
+          if (left === -1) {
+            this.pauseConsumeNotes();
+
+            if (!this.state.isLoop) {
+              this.setState({
+                notesLeft: 0,
+                playerStatus: 'stop',
+                snackOpen: true,
+                snackMessage: 'Stopped'
+              });
+            }
+
+          } else if (left === 0 && this.state.playerStatus ==='play' && this.state.isLoop) {
+            this.play();
+          } else {
+            this.setState({
+              notesLeft: left
+            });
+          }
+      }.bind(this), 1000/this.state.speed);
+
     },
     onSpeedChanged: function (speed) {
       this.setState({
         speed: speed
       });
-    },
-    onPlayerClicked: function (whichKey) {
-      var notes;
-
-      if (whichKey !== 'loop' && (this.state.playerStatus === whichKey))
-        return;
-
-
-      if (whichKey === 'play') {
-        this.setState({
-          playerStatus: 'play'
-        });
-
-        notes = this.state.notesText.split('').map(function (c) {
-            return parseInt(c);
-        });
-        wm.speed = this.state.speed;
-        wm.play(notes);
-
-        var totalTime = (notes.length + 1)* (1000/this.state.speed);
-
-        if (this.state.loop) {
-          looper = setInterval(function () {
-              wm.play(notes);
-          }.bind(this), totalTime - 500);
-        } else {
-          setTimeout(function () {
-              this  .onPlayerClicked('stop');
-          }.bind(this), totalTime);
-        }
-
-      } else if (whichKey === 'stop') {
-        if (looper) {
-          clearInterval(looper);
-          looper = null;
-        }
-        this.setState({
-          playerStatus: 'stop'
-        });
-        wm.stop();
-      } else if (whichKey === 'pause') {
-        this.setState({
-          playerStatus: 'pause'
-        });
-        wm.pause();
-      } else if (whichKey === 'loop') {
-        var loopState = !this.state.loop;
-
-        if (!loopState && looper)
-            clearInterval(looper);
-
-        this.setState({
-          loop: loopState
-        });
-      }
-      console.log(whichKey);
-
     },
     onNoteChanged: function (text) {
       text = text.length ? text.replace(/[,\s\n\r\t\0]/g, '') : '';
@@ -126,24 +126,155 @@ var Panel = React.createClass({
         notesText: text
       });
     },
+    handleRequestClose: function () {
+        this.setState({
+          snackOpen: false
+        });
+    },
+    onLoopToggled: function () {
+        var loopState;
+        if (this.state.playerStatus !== 'stop') {
+          this.setState({
+            snackOpen: true,
+            snackMessage: 'Please stop playing first'
+          });
+        } else {
+          loopState = !this.state.isLoop;
+
+          this.setState({
+            isLoop: loopState,
+            snackOpen: true,
+            snackMessage: 'Loop ' + (loopState ? 'on' : 'off')
+          });
+        }
+    },
+    onPlayerClicked: function (whichKey) {
+      var notes;
+
+      if (whichKey === 'loop') {
+        this.onLoopToggled();
+        return;
+      }
+
+      switch (whichKey) {
+        case 'play':
+
+          if (this.state.notesText.length === 0) {
+            this.setState({
+              playerStatus: 'stop',
+              snackOpen: true,
+              snackMessage: 'Nothing to play'
+            });
+          } else {
+
+            if (this.state.playerStatus === 'play') {
+              this.setState({
+                snackOpen: true,
+                snackMessage: 'Music is playing.'
+              });
+            } else if (this.state.playerStatus === 'pause') {
+              this.setState({
+                playerStatus: 'play',
+                snackOpen: true,
+                snackMessage: 'Resume'
+              });
+              wm.play();
+              this.startConsumeNotes();
+            } else if (this.state.playerStatus === 'stop') {
+
+              this.setState({
+                playerStatus: 'play',
+                snackOpen: true,
+                snackMessage: 'Start'
+              });
+              this.play();
+            }
+          }
+
+          break;
+
+        case 'pause':
+          if (this.state.playerStatus === 'play') {
+            this.setState({
+              playerStatus: 'pause',
+              snackOpen: true,
+              snackMessage: 'Paused'
+            });
+            this.pauseConsumeNotes();
+            wm.pause();
+          }
+
+          break;
+
+        case 'stop':
+          this.clearConsumeNotes();
+          if (this.state.playerStatus === 'play') {
+            wm.stop();
+
+            this.setState({
+              playerStatus: 'stop',
+              snackOpen: true,
+              snackMessage: 'Stopped'
+            });
+          } else if (this.state.playerStatus === 'pause') {
+            wm.play();
+            wm.stop();
+
+            this.setState({
+              playerStatus: 'stop',
+              snackOpen: true,
+              snackMessage: 'Stopped'
+            });
+          }
+          break;
+      }
+    },
+    play: function () {
+        var notes = this.state.notesText.split('').map(function (c) {
+            return parseInt(c);
+        });
+
+        this.setState({
+          notesLeft: notes.length
+        });
+
+        wm.speed = this.state.speed;
+        wm.play(notes);
+        var totalTime = (notes.length + 1)* (1000/this.state.speed);
+        this.startConsumeNotes();
+    },
     render: function () {
         return (
           <div style={this.props.style}>
+            
             <div style={{marginBottom: "20px"}}>
               <h2 style={{ color: cyanA700, textAlign: "center" }}>Stay Tuned!</h2>
-              <Divider />
+                <Divider />
             </div>
 
-            <SpeedSelector style={{marginBottom: "20px"}} onChanged={this.onSpeedChanged} />
+            <SpeedSelector style={{marginBottom: "20px"}} value={this.state.speed} disabled={this.state.playerStatus !== 'stop'} onChanged={this.onSpeedChanged} />
             <Divider />
-            <Player style={{marginLeft: "20px", marginRight: "20px", marginTop: "20px"}} isLoop={this.state.loop} onClicked={this.onPlayerClicked} />
+            <div>
+              <PlayerNew style={{display: "inline-block", marginLeft: "20px", marginTop: "26px"}} isLoop={this.state.isLoop} status={this.state.playerStatus} onClicked={this.onPlayerClicked}>
+                <LinearProgress mode="determinate" color={progColor} style={{height: "1.5px", display: "inline-block"}} min={0} max={this.state.notesText.length} value={this.state.notesLeft} />
+              </PlayerNew>
+              <div style={{display: "inline-block", marginBottom: "-20px"}} >
+                  <Snackbar
+                    style={{position: "relative", marginLeft: "30%"}}
+                    open={this.state.snackOpen}
+                    message={this.state.snackMessage}
+                    autoHideDuration={1600}
+                    onRequestClose={this.handleRequestClose}
+                  />
+              </div>
+            </div>
+
             <div style={{marginRight: "20px"}}>
-              <NoteInput fullWidth={true} style={{marginLeft: "20px", marginTop: "0px"}} onChanged={this.onNoteChanged} />
+              <NoteInput fullWidth={true} style={{marginLeft: "20px", marginTop: "0px"}} disabled={this.state.playerStatus !== 'stop'} onChanged={this.onNoteChanged} />
             </div>
           </div>
         );
     }
 });
-
 
 module.exports = Panel;
